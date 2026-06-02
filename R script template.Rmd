@@ -22,6 +22,8 @@ require(yaml)
 # Title Page
 
 Include your names
+Melvin Hofman
+
 
 Include the tutorial group number
 
