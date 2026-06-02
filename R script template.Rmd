@@ -23,7 +23,7 @@ require(yaml)
 
 Include your names
 Melvin Hofman
-
+Max Bergsma
 
 Include the tutorial group number
 
