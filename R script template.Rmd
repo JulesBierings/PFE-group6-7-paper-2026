@@ -31,6 +31,8 @@ require(yaml)
 Include your names
 Melvin Hofman
 Max Bergsma
+Gijs Stevens
+
 
 Include the tutorial group number
 
