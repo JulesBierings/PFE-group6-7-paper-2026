@@ -32,6 +32,7 @@ Include your names
 Melvin Hofman
 Max Bergsma
 Gijs Stevens
+Jules Bierings
 
 
 Include the tutorial group number
