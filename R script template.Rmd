@@ -61,6 +61,9 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 
 # 2. Haal de tabel op via de code
 huizenprijzen_raw <- cbs_get_data("85773NED")
+
+# Vervang "83765NED" door de code van de tabel die jij nodig hebt
+mijn_data <- cbs_get_data("70072NED")
 ```
 
 midwest is an example dataset included in the tidyverse package
@@ -68,7 +71,8 @@ midwest is an example dataset included in the tidyverse package
 ## 2.2 Provide a short summary of the dataset(s)
 
 ```{r}
-head(dataset)
+head(huizenprijzen_raw)
+head(mijn_data)
 ```
 
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
