@@ -64,6 +64,10 @@ huizenprijzen_raw <- cbs_get_data("85773NED")
 
 # Vervang "83765NED" door de code van de tabel die jij nodig hebt
 mijn_data <- cbs_get_data("70072NED")
+
+#Vervang naam mijn_data naar huizenprijzen
+huizenprijzen <- mijn_data
+
 ```
 
 midwest is an example dataset included in the tidyverse package
