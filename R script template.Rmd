@@ -20,7 +20,7 @@ library(dplyr)
 
 ```
 
-```{r packages}
+```{r packages, include=FALSE}
 require(tidyverse)
 require(rmarkdown)
 require(yaml)
@@ -32,6 +32,7 @@ Include your names
 Melvin Hofman
 Max Bergsma
 Gijs Stevens
+Hidde Voors
 
 
 Include the tutorial group number
