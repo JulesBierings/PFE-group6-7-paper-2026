@@ -74,6 +74,11 @@ midwest is an example dataset included in the tidyverse package
 
 ## 2.2 Provide a short summary of the dataset(s)
 
+We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde huizenprijzen aan per gemeente. 
+
+#er moet nog een data set voor het inkomen komen 
+
+
 ```{r}
 head(huizenprijzen_raw)
 ```
