@@ -60,13 +60,20 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 ```{r loading_data}
 
 # 2. Haal de tabel op via de code
-huizenprijzen_raw <- cbs_get_data("85773NED")
+#huizenprijzen_raw <- cbs_get_data("85773NED")
 
 # Vervang "83765NED" door de code van de tabel die jij nodig hebt
-mijn_data <- cbs_get_data("70072NED")
+#mijn_data <- cbs_get_data("70072NED")
 
 #Vervang naam mijn_data naar huizenprijzen
-huizenprijzen <- mijn_data
+#huizenprijzen <- mijn_data
+
+# Save datasets as .csv files
+#write.csv(huizenprijzen_raw, "data/huizenprijzen_raw.csv")
+#write.csv(huizenprijzen, "data/huizenprijzen.csv")
+
+huizenprijzen_raw <- read.csv("data/huizenprijzen_raw.csv")
+huizenprijzen <- read.csv("data/huizenprijzen.csv")
 
 ```
 
