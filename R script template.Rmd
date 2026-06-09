@@ -69,12 +69,17 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 #Vervang naam mijn_data naar huizenprijzen
 #huizenprijzen <- mijn_data
 
+inkomens_raw <- cbs_get_data("84494NED")
+write.csv(inkomens_raw, "data/inkomens_raw.csv")
+
 # Save datasets as .csv files
 #write.csv(huizenprijzen_raw, "data/huizenprijzen_raw.csv")
 #write.csv(huizenprijzen, "data/huizenprijzen.csv")
 
 huizenprijzen_raw <- read.csv("data/huizenprijzen_raw.csv")
 huizenprijzen <- read.csv("data/huizenprijzen.csv")
+
+
 
 ```
 
