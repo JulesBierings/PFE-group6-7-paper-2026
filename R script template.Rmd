@@ -78,6 +78,7 @@ write.csv(inkomens_raw, "data/inkomens_raw.csv")
 
 huizenprijzen_raw <- read.csv("data/huizenprijzen_raw.csv")
 huizenprijzen <- read.csv("data/huizenprijzen.csv")
+inkomens_raw <- read.csv("data/inkomens_raw.csv")
 
 
 
