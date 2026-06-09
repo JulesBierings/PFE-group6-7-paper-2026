@@ -33,6 +33,7 @@ Melvin Hofman
 Max Bergsma
 Gijs Stevens
 Hidde Voors
+Imad el Hilali
 
 
 Include the tutorial group number
