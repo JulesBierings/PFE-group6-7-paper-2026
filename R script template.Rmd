@@ -46,11 +46,19 @@ Use APA referencing throughout your document. [Here's a link to some explanation
 
 ## 1.1 Describe the Social Problem
 
-Include the following:
+Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth may not have kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market. Rising housing costs can contribute to financial stress, wealth inequality, and reduced access to homeownership.
 
--   Why is this relevant?
+Understanding whether house prices have increased faster than incomes is therefore important for evaluating changes in housing affordability. If housing prices grow more rapidly than household incomes, purchasing a home becomes increasingly difficult for a large share of the population. This may have significant social and economic consequences, including increased inequality between homeowners and non-homeowners.
 
--   ...
+The main research question of this study is:
+
+Have housing prices in the Netherlands increased faster than incomes over the past ten years?
+
+To answer this question, the following sub-questions are examined:
+1. How have house prices and average incomes developed between 2014 and 2024?
+2. How has housing affordability changed during this period?
+3. Are there significant differences in housing affordability between Dutch provinces?
+4. Did the COVID-19 pandemic influence the relationship between house prices and income?
 
 # Part 2 - Data Sourcing
 
