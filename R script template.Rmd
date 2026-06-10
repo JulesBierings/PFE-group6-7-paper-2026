@@ -105,7 +105,10 @@ We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde
 "TotaleBevolking_1"
 
 ```{r}
+<<<<<<< HEAD
 huizenprijzen <- read.csv("data/huizenprijzen.csv")
+=======
+>>>>>>> fd92d3c398f7e7a8384e2ce4d935afe6ace4fa63
 
 ```
 
