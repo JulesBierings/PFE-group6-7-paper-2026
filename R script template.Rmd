@@ -95,7 +95,7 @@ midwest is an example dataset included in the tidyverse package
 
 We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde huizenprijzen aan per gemeente. 
 
-
+```{R}
 library(dplyr)
 # Behoud alleen de variabelen "Perioden" en "RegioS" en "GemiddeldeWOZWaardeVanWoningen_98"
 selectie_huizenprijzen <- select(huizenprijzen, Perioden, RegioS, GemiddeldeWOZWaardeVanWoningen_98)
@@ -105,6 +105,8 @@ selectie_2013_huizenprijzen <- selectie_huizenprijzen %>% filter(Perioden == "20
 
 selectie_yby_huizenprijzen <- selectie_huizenprijzen %>% filter(RegioS == "NL01")
 
+selectie_2013_huizenprijzen
+```
 #er moet nog een data set voor het inkomen komen 
 
 
