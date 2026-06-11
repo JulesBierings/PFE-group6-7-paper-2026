@@ -172,17 +172,11 @@ landelijk <- raw_dataset %>%
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   ) %>%
   mutate(
-
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
-
     WOZ_growth_yoy = (GemiddeldeWOZ / lag(GemiddeldeWOZ) - 1) * 100,
-
     Income_growth_yoy = (InkomenWerknemer / lag(InkomenWerknemer) - 1) * 100,
-
     GrowthGap_yoy = WOZ_growth_yoy - Income_growth_yoy
-
   )
-
 
 write.csv(landelijk, "data/landelijk.csv")
 
