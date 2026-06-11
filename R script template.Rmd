@@ -153,7 +153,7 @@ landelijk <- raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year >= 2011,
+    Year >= 2015,
     Year <= 2024,
     startsWith(RegioS, "NL")
   ) %>%
@@ -181,8 +181,8 @@ landelijk
 landelijk_index <- landelijk %>%
   arrange(Year) %>%
   mutate(
-    WOZ_index = GemiddeldeWOZ / GemiddeldeWOZ[Year == 2011] * 100,
-    Inkomen_index = InkomenWerknemer / InkomenWerknemer[Year == 2011] * 100
+    WOZ_index = GemiddeldeWOZ / GemiddeldeWOZ[Year == 2015] * 100,
+    Inkomen_index = InkomenWerknemer / InkomenWerknemer[Year == 2015] * 100
   ) %>%
   select(Year, WOZ_index, Inkomen_index) %>%
   pivot_longer(
