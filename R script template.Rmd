@@ -11,6 +11,7 @@ output: pdf_document
 library(cbsodataR)
 library(dplyr)
 library(lubridate)
+library(sf)
 ```
 
 ```{r packages, include=FALSE}
@@ -90,7 +91,7 @@ huizenprijzen_provincie = raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year == 2024,
+    Year == 2023,
     startsWith(RegioS, "PV")
   ) %>%
   select(
@@ -110,7 +111,7 @@ inkomen_provincie <- raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year == 2024,
+    Year == 2023,
     startsWith(RegioS, "PV")
   ) %>%
   select(
@@ -133,7 +134,8 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
   rename(
     GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
     InkomenWerknemer = BronInkomenAlsWerknemer_141
-  )
+  )  %>%
+  mutate(statcode = RegioS)
 provincie_samengevoegd
 ```
 
@@ -145,6 +147,36 @@ provincie_samengevoegd <- provincie_samengevoegd %>%
 provincie_samengevoegd
 
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
+```
+
+```{r Get Spatial Information}
+provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
+
+provincie_samengevoegd <- provincie_samengevoegd %>%
+  mutate(
+    statcode = trimws(RegioS),
+    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
+  )
+
+provincie_map <- provincie_map %>%
+  mutate(
+    statcode = trimws(statcode)
+  )
+
+provincie_map_data <- provincie_map %>%
+  left_join(
+    provincie_samengevoegd,
+    by = "statcode"
+  )
+
+ggplot(provincie_map_data) +
+  geom_sf(aes(fill = AffordabilityRatio), color = "white") +
+  labs(
+    title = "Housing Affordability by Province in 2023",
+    subtitle = "Average WOZ value divided by employee income",
+    fill = "WOZ-to-income ratio"
+  ) +
+  theme_minimal()
 ```
 
 ```{r Landelijke Dataset}
