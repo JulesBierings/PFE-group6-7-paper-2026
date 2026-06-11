@@ -170,6 +170,43 @@ write.csv(landelijk, "data/landelijk.csv")
 landelijk
 ```
 
+```{r landelijke_plot}
+# Deze plot gemaakt met chat
+
+landelijk_index <- landelijk %>%
+  arrange(Year) %>%
+  mutate(
+    WOZ_index = GemiddeldeWOZ / GemiddeldeWOZ[Year == 2011] * 100,
+    Inkomen_index = InkomenWerknemer / InkomenWerknemer[Year == 2011] * 100
+  ) %>%
+  select(Year, WOZ_index, Inkomen_index) %>%
+  pivot_longer(
+    cols = c(WOZ_index, Inkomen_index),
+    names_to = "Variable",
+    values_to = "Index"
+  ) %>%
+  mutate(
+    Variable = recode(
+      Variable,
+      WOZ_index = "Average WOZ value",
+      Inkomen_index = "Employee income"
+    )
+  )
+
+ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  labs(
+    title = "Development of House Values and Employee Income in the Netherlands",
+    subtitle = "Indexed values, 2011 = 100",
+    x = "Year",
+    y = "Index value",
+    color = "Variable"
+  ) +
+  theme_minimal()
+```
+
+
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
 
 ``` r
