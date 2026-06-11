@@ -134,15 +134,17 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
     GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   )
-write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
-
 provincie_samengevoegd
 ```
 
 ```{r Nieuwe Variable}
-##############################################
-###### Hier nieuwe variable maken ############
-##############################################
+provincie_samengevoegd <- provincie_samengevoegd %>%
+  mutate(
+    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
+  )
+provincie_samengevoegd
+
+write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 ```
 
 ```{r Landelijke Dataset}
