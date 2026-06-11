@@ -211,6 +211,25 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   theme_minimal()
 ```
 
+```{r affordability_index_plot}
+landelijk_affordability_index <- landelijk %>%
+  arrange(Year) %>%
+  mutate(
+    AffordabilityIndex = AffordabilityRatio / AffordabilityRatio[Year == 2015] * 100
+  )
+
+ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 100, linetype = "dashed") +
+  labs(
+    title = "Housing Affordability Index in the Netherlands",
+    subtitle = "Affordability ratio indexed to 2015 = 100",
+    x = "Year",
+    y = "Affordability index"
+  ) +
+  theme_minimal()
+```
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
 
 ``` r
