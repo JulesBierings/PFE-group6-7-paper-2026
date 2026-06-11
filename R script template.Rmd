@@ -90,7 +90,7 @@ huizenprijzen_provincie = raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year == 2023,
+    Year == 2024,
     startsWith(RegioS, "PV")
   ) %>%
   select(
@@ -110,7 +110,7 @@ inkomen_provincie <- raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year == 2023,
+    Year == 2024,
     startsWith(RegioS, "PV")
   ) %>%
   select(
