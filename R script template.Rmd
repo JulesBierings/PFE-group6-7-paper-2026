@@ -63,7 +63,10 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 # 2. Haal de tabel op via de code
 # Vervang "83765NED" door de code van de tabel die jij nodig hebt
 
-raw_dataset <- cbs_get_data("70072NED")
+data_download <- cbs_get_data("70072NED")
+
+raw_dataset <- data_download %>%
+  cbs_add_label_columns()
 
 # Save datasets as .csv files
 write.csv(raw_dataset, "data/raw_dataset.csv")
@@ -90,6 +93,7 @@ huizenprijzen_provincie = raw_dataset %>%
   select(
     Year,
     RegioS,
+    RegioS_label,
     GemiddeldeWOZWaardeVanWoningen_98
   )
 
@@ -99,19 +103,8 @@ write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 ```
 #er moet nog een data set voor het inkomen komen 
 
-
-"BronInkomenAlsWerknemer_141"               
-"BronInkomenAlsZelfstandige_142" 
-"Perioden"
-"RegioS"
-"TotaleBevolking_1"
-
 ```{r}
 raw_dataset <- read.csv("data/raw_dataset.csv")
-```
-
-```{r}
-raw_dataset$
 ```
 
 ```{r}
@@ -126,6 +119,7 @@ inkomen_provincie <- raw_dataset %>%
   select(
     Year,
     RegioS,
+    RegioS_label,
     BronInkomenAlsWerknemer_141
   )
 inkomen_provincie

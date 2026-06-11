@@ -1,13 +1,13 @@
-"","Year","RegioS","GemiddeldeWOZWaardeVanWoningen_98"
-"1",2023,"PV20  ",268
-"2",2023,"PV21  ",277
-"3",2023,"PV22  ",294
-"4",2023,"PV23  ",325
-"5",2023,"PV24  ",347
-"6",2023,"PV25  ",364
-"7",2023,"PV26  ",447
-"8",2023,"PV27  ",460
-"9",2023,"PV28  ",359
-"10",2023,"PV29  ",281
-"11",2023,"PV30  ",370
-"12",2023,"PV31  ",288
+"","Year","RegioS","RegioS_label","GemiddeldeWOZWaardeVanWoningen_98"
+"1",2023,"PV20  ","Groningen (PV)",268
+"2",2023,"PV21  ","Fryslân (PV)",277
+"3",2023,"PV22  ","Drenthe (PV)",294
+"4",2023,"PV23  ","Overijssel (PV)",325
+"5",2023,"PV24  ","Flevoland (PV)",347
+"6",2023,"PV25  ","Gelderland (PV)",364
+"7",2023,"PV26  ","Utrecht (PV)",447
+"8",2023,"PV27  ","Noord-Holland (PV)",460
+"9",2023,"PV28  ","Zuid-Holland (PV)",359
+"10",2023,"PV29  ","Zeeland (PV)",281
+"11",2023,"PV30  ","Noord-Brabant (PV)",370
+"12",2023,"PV31  ","Limburg (PV)",288
