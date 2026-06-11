@@ -134,6 +134,7 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
     GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   )
+write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 
 provincie_samengevoegd
 ```
