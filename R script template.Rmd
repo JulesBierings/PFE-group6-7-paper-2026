@@ -268,6 +268,85 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   ) +
   theme_minimal()
 ```
+
+```{r subpopulation_urbanization_boxplot}
+urban_affordability <- raw_dataset %>%
+  mutate(
+    Year = as.integer(substr(Perioden, 1, 4))
+  ) %>%
+  filter(
+    Year == 2024,
+    startsWith(RegioS, "GM")
+  ) %>%
+  select(
+    Year,
+    RegioS,
+    RegioS_label,
+    GemiddeldeWOZWaardeVanWoningen_98,
+    BronInkomenAlsWerknemer_141,
+    ZeerSterkStedelijk_52,
+    SterkStedelijk_53,
+    MatigStedelijk_54,
+    WeinigStedelijk_55,
+    NietStedelijk_56
+  ) %>%
+  rename(
+    GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
+    InkomenWerknemer = BronInkomenAlsWerknemer_141
+  ) %>%
+  mutate(
+    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
+  ) %>%
+  pivot_longer(
+    cols = c(
+      ZeerSterkStedelijk_52,
+      SterkStedelijk_53,
+      MatigStedelijk_54,
+      WeinigStedelijk_55,
+      NietStedelijk_56
+    ),
+    names_to = "UrbanizationType",
+    values_to = "UrbanizationValue"
+  ) %>%
+  group_by(RegioS, RegioS_label, Year) %>%
+  slice_max(UrbanizationValue, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(
+    UrbanizationType = recode(
+      UrbanizationType,
+      ZeerSterkStedelijk_52 = "Very strongly urban",
+      SterkStedelijk_53 = "Strongly urban",
+      MatigStedelijk_54 = "Moderately urban",
+      WeinigStedelijk_55 = "Weakly urban",
+      NietStedelijk_56 = "Non-urban"
+    ),
+    UrbanizationType = factor(
+      UrbanizationType,
+      levels = c(
+        "Very strongly urban",
+        "Strongly urban",
+        "Moderately urban",
+        "Weakly urban",
+        "Non-urban"
+      )
+    )
+  )
+
+ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
+  geom_boxplot() +
+  labs(
+    title = "Housing Affordability by Urbanization Level",
+    subtitle = "Municipalities grouped by dominant urbanization category, 2024",
+    x = "Urbanization level",
+    y = "WOZ-to-income ratio"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 25, hjust = 1)
+  )
+```
+
+
 In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
 
 ``` r
