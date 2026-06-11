@@ -146,7 +146,47 @@ provincie_samengevoegd <- provincie_samengevoegd %>%
   )
 provincie_samengevoegd
 
+# 2e Nieuwe variable
+
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
+```
+
+```{r Landelijke Dataset}
+landelijk <- raw_dataset %>%
+  mutate(
+    Year = as.integer(substr(Perioden, 1, 4))
+  ) %>%
+  filter(
+    Year >= 2015,
+    Year <= 2024,
+    startsWith(RegioS, "NL")
+  ) %>%
+  select(
+    Year,
+    RegioS_label,
+    BronInkomenAlsWerknemer_141,
+    GemiddeldeWOZWaardeVanWoningen_98
+  ) %>%
+  rename(
+    GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
+    InkomenWerknemer = BronInkomenAlsWerknemer_141
+  ) %>%
+  mutate(
+
+    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
+
+    WOZ_growth_yoy = (GemiddeldeWOZ / lag(GemiddeldeWOZ) - 1) * 100,
+
+    Income_growth_yoy = (InkomenWerknemer / lag(InkomenWerknemer) - 1) * 100,
+
+    GrowthGap_yoy = WOZ_growth_yoy - Income_growth_yoy
+
+  )
+
+
+write.csv(landelijk, "data/landelijk.csv")
+
+landelijk
 ```
 
 ```{r Get Spatial Information}
@@ -177,34 +217,6 @@ ggplot(provincie_map_data) +
     fill = "WOZ-to-income ratio"
   ) +
   theme_minimal()
-```
-
-```{r Landelijke Dataset}
-landelijk <- raw_dataset %>%
-  mutate(
-    Year = as.integer(substr(Perioden, 1, 4))
-  ) %>%
-  filter(
-    Year >= 2015,
-    Year <= 2024,
-    startsWith(RegioS, "NL")
-  ) %>%
-  select(
-    Year,
-    RegioS_label,
-    BronInkomenAlsWerknemer_141,
-    GemiddeldeWOZWaardeVanWoningen_98
-  ) %>%
-  rename(
-    GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
-    InkomenWerknemer = BronInkomenAlsWerknemer_141
-  ) %>%
-  mutate(
-    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
-  )
-write.csv(landelijk, "data/landelijk.csv")
-
-landelijk
 ```
 
 ```{r landelijke_plot}
