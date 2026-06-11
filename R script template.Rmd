@@ -17,7 +17,6 @@ library(lubridate)
 require(tidyverse)
 require(rmarkdown)
 require(yaml)
-
 ```
 
 # Title Page
@@ -93,6 +92,7 @@ huizenprijzen_provincie = raw_dataset %>%
     RegioS,
     GemiddeldeWOZWaardeVanWoningen_98
   )
+
 huizenprijzen_provincie
 
 write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
@@ -108,6 +108,10 @@ write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 
 ```{r}
 raw_dataset <- read.csv("data/raw_dataset.csv")
+```
+
+```{r}
+raw_dataset$
 ```
 
 ```{r}
