@@ -80,8 +80,11 @@ midwest is an example dataset included in the tidyverse package
 
 We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde huizenprijzen aan per gemeente. 
 
-```{R}
-# Behoud alleen de variabelen "Perioden" en "RegioS" en "GemiddeldeWOZWaardeVanWoningen_98"
+```{r Read the raw dataset}
+raw_dataset <- read.csv("data/raw_dataset.csv")
+```
+
+```{r Huizenprijzen Dataset}
 huizenprijzen_provincie = raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -96,18 +99,12 @@ huizenprijzen_provincie = raw_dataset %>%
     RegioS_label,
     GemiddeldeWOZWaardeVanWoningen_98
   )
+write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 
 huizenprijzen_provincie
-
-write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
-```
-#er moet nog een data set voor het inkomen komen 
-
-```{r}
-raw_dataset <- read.csv("data/raw_dataset.csv")
 ```
 
-```{r}
+```{r Inkomen Dataset}
 inkomen_provincie <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -122,9 +119,9 @@ inkomen_provincie <- raw_dataset %>%
     RegioS_label,
     BronInkomenAlsWerknemer_141
   )
-inkomen_provincie
-
 write.csv(inkomen_provincie, "data/inkomen_provincie.csv")
+
+inkomen_provincie
 ```
 
 
