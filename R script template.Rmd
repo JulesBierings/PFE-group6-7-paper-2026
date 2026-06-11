@@ -8,13 +8,6 @@ output: pdf_document
 # Set-up your environment
 
 ```{r package_install, include=FALSE}
-install.packages("tidyverse")
-install.packages("yaml")
-install.packages("rmarkdown")
-install.packages("cbsodataR")
-install.packages("dplyr")
-
-
 library(cbsodataR)
 library(dplyr)
 library(lubridate)
@@ -69,24 +62,14 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 
 ```{r loading_data}
 # 2. Haal de tabel op via de code
-huizenprijzen_raw <- cbs_get_data("85773NED")
-
 # Vervang "83765NED" door de code van de tabel die jij nodig hebt
-mijn_data <- cbs_get_data("70072NED")
 
-#Vervang naam mijn_data naar huizenprijzen
-huizenprijzen <- mijn_data
-
-inkomens_raw <- cbs_get_data("84494NED")
-write.csv(inkomens_raw, "data/inkomens_raw.csv")
+raw_dataset <- cbs_get_data("70072NED")
 
 # Save datasets as .csv files
-write.csv(huizenprijzen_raw, "data/huizenprijzen_raw.csv")
-write.csv(huizenprijzen, "data/huizenprijzen.csv")
+write.csv(raw_dataset, "data/raw_dataset.csv")
 
-huizenprijzen_raw <- read.csv("data/huizenprijzen_raw.csv")
-huizenprijzen <- read.csv("data/huizenprijzen.csv")
-inkomens_raw <- read.csv("data/inkomens_raw.csv")
+raw_dataset <- read.csv("data/raw_dataset.csv")
 ```
 
 midwest is an example dataset included in the tidyverse package
@@ -96,16 +79,23 @@ midwest is an example dataset included in the tidyverse package
 We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde huizenprijzen aan per gemeente. 
 
 ```{R}
-library(dplyr)
 # Behoud alleen de variabelen "Perioden" en "RegioS" en "GemiddeldeWOZWaardeVanWoningen_98"
-selectie_huizenprijzen <- select(huizenprijzen, Perioden, RegioS, GemiddeldeWOZWaardeVanWoningen_98)
-selectie_yby_huizenprijzen <- selectie_huizenprijzen %>% filter(RegioS > "NL01")
+huizenprijzen_provincie = raw_dataset %>%
+  mutate(
+    Year = as.integer(substr(Perioden, 1, 4))
+  ) %>%
+  filter(
+    Year == 2023,
+    startsWith(RegioS, "PV")
+  ) %>%
+  select(
+    Year,
+    RegioS,
+    GemiddeldeWOZWaardeVanWoningen_98
+  )
+huizenprijzen_provincie
 
-selectie_2013_huizenprijzen <- selectie_huizenprijzen %>% filter(Perioden == "2013JJ00")
-
-selectie_yby_huizenprijzen <- selectie_huizenprijzen %>% filter(RegioS == "NL01")
-
-selectie_2013_huizenprijzen
+write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 ```
 #er moet nog een data set voor het inkomen komen 
 
@@ -117,21 +107,16 @@ selectie_2013_huizenprijzen
 "TotaleBevolking_1"
 
 ```{r}
-huizenprijzen <- read.csv("data/huizenprijzen.csv")
+raw_dataset <- read.csv("data/raw_dataset.csv")
 ```
 
 ```{r}
-colnames(huizenprijzen)
-```
-
-```{r}
-inkomen_provincie <- huizenprijzen %>%
+inkomen_provincie <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year >= 2014,
-    Year <= 2023,
+    Year == 2023,
     startsWith(RegioS, "PV")
   ) %>%
   select(
