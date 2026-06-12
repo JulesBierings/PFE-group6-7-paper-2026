@@ -202,6 +202,15 @@ Think of things like:
 
 -   Have they been measured by interviewing individuals or is the data coming from administrative sources?
 
+
+# Part 3 - Quantifying
+
+## 3.1 Data cleaning
+
+Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
+
+Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
+
 ## 3.2 Generate necessary variables
 
 
@@ -215,28 +224,15 @@ provincie_samengevoegd
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 ```
 ```{r New Variable 2}
-landelijk_growthgap = landelijk %>%
+landelijk = landelijk %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
     WOZ_growth_yoy = (GemiddeldeWOZ / lag(GemiddeldeWOZ) - 1) * 100,
     Income_growth_yoy = (InkomenWerknemer / lag(InkomenWerknemer) - 1) * 100,
     GrowthGap_yoy = WOZ_growth_yoy - Income_growth_yoy
   )
-kable(landelijk_growthgap)
+kable(landelijk)
 ```
-
-# Part 3 - Quantifying
-
-## 3.1 Data cleaning
-
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
-
-```{r data_cleaning}
-
-```
-
-Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
-
 
 
 
@@ -278,8 +274,6 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   theme_minimal()
 ```
 
-## 3.2
-
 ## 3.4 Visualize spatial variation
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
@@ -313,40 +307,13 @@ ggplot(provincie_map_data) +
   ) +
   theme_minimal()
 ```
-
-## 3.6 Event analysis
-
-Analyze the relationship between two variables.
-Here you provide a description of why the plot above is relevant to your specific social problem.
-
-
-```{r Affordability Index Plot}
-landelijk_affordability_index <- landelijk %>%
-  arrange(Year) %>%
-  mutate(
-    AffordabilityIndex = AffordabilityRatio / AffordabilityRatio[Year == 2015] * 100
-  )
-
-ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
-  geom_line(linewidth = 1.2) +
-  geom_point(size = 2) +
-  geom_hline(yintercept = 100, linetype = "dashed") +
-  labs(
-    title = "Housing Affordability Index in the Netherlands",
-    subtitle = "Affordability ratio indexed to 2015 = 100",
-    x = "Year",
-    y = "Affordability index"
-  ) +
-  theme_minimal()
-```
-
 ## 3.5 Visualize sub-population variation
 
 What is the poverty rate by state?
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
-```{r Subpopulation Boxplot}
+```{r Subpopulation Boxplot, message=FALSE, warning=FALSE}
 urban_affordability <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -423,50 +390,31 @@ ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
   )
 ```
 
-
-In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
-
-``` r
-inline_code = TRUE
-```
-
-These are things that are usually included in the metadata of the dataset. For your project, you need to provide us with the information from your metadata that we need to understand your dataset of choice.
-
-
-*For the sake of this example, I will continue with the assignment...*
-
-# Part 3 - Quantifying
-
-## 3.1 Data cleaning
-
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
-
-```{r data_cleaning}
-
-```
-
-Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
-
-
-## 3.5 Visualize sub-population variation
-
-What is the poverty rate by state?
-
-```{r visualise_subpopulations, eval=FALSE, include=FALSE}
-
-```
-
-Here you provide a description of why the plot above is relevant to your specific social problem.
-
 ## 3.6 Event analysis
 
 Analyze the relationship between two variables.
-
-```{r analysis}
-
-```
-
 Here you provide a description of why the plot above is relevant to your specific social problem.
+
+
+```{r Affordability Index Plot}
+landelijk_affordability_index <- landelijk %>%
+  arrange(Year) %>%
+  mutate(
+    AffordabilityIndex = AffordabilityRatio / AffordabilityRatio[Year == 2015] * 100
+  )
+
+ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 100, linetype = "dashed") +
+  labs(
+    title = "Housing Affordability Index in the Netherlands",
+    subtitle = "Affordability ratio indexed to 2015 = 100",
+    x = "Year",
+    y = "Affordability index"
+  ) +
+  theme_minimal()
+```
 
 # Part 4 - Discussion
 
