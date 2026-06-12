@@ -3,10 +3,10 @@ title: "Template"
 author: "Studentnames and studentnumbers here"
 date: "`r Sys.Date()`"
 output:
+  pdf_document: default
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
-  pdf_document: default
 ---
 
 # Set-up your environment
@@ -16,6 +16,7 @@ library(cbsodataR)
 library(dplyr)
 library(lubridate)
 library(sf)
+library(knitr)
 ```
 
 ```{r packages, include=FALSE}
@@ -64,32 +65,20 @@ To answer this question, the following sub-questions are examined:
 
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
-```{r loading_data}
-# 2. Haal de tabel op via de code
-# Vervang "83765NED" door de code van de tabel die jij nodig hebt
+```{r Downloading Data}
+# data_download <- cbs_get_data("70072NED")
 
-data_download <- cbs_get_data("70072NED")
+# Add region label to the dataset
+# raw_dataset <- data_download %>% cbs_add_label_columns()
 
-raw_dataset <- data_download %>%
-  cbs_add_label_columns()
-
-# Save datasets as .csv files
-write.csv(raw_dataset, "data/raw_dataset.csv")
-
-raw_dataset <- read.csv("data/raw_dataset.csv")
+# write.csv(raw_dataset, "data/raw_dataset.csv")
+raw_dataset = read.csv("data/raw_dataset.csv")
 ```
 
-midwest is an example dataset included in the tidyverse package
 
 ## 2.2 Provide a short summary of the dataset(s)
 
-We hebben 2 verschillende dataset. De dataset huizenprijzen  geeft de gemiddelde huizenprijzen aan per gemeente. 
-
-```{r Read the raw dataset}
-raw_dataset <- read.csv("data/raw_dataset.csv")
-```
-
-```{r Huizenprijzen Dataset}
+```{r Homevalue Dataset}
 huizenprijzen_provincie = raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -106,10 +95,10 @@ huizenprijzen_provincie = raw_dataset %>%
   )
 write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 
-huizenprijzen_provincie
+head(huizenprijzen_provincie)
 ```
 
-```{r Inkomen Dataset}
+```{r Income Dataset}
 inkomen_provincie <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -126,10 +115,10 @@ inkomen_provincie <- raw_dataset %>%
   )
 write.csv(inkomen_provincie, "data/inkomen_provincie.csv")
 
-inkomen_provincie
+head(inkomen_provincie)
 ```
 
-```{r Provincie Datasets Merge}
+```{r Province Datasets Merge}
 provincie_samengevoegd = huizenprijzen_provincie %>%
   inner_join(
     inkomen_provincie,
@@ -140,10 +129,49 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   )  %>%
   mutate(statcode = RegioS)
-provincie_samengevoegd
+head(provincie_samengevoegd)
+```
+```{r Summarize Data}
+provincie_summary = provincie_samengevoegd %>%
+  summarise(
+    Mean_WOZ = mean(GemiddeldeWOZ),
+    Min_WOZ = min(GemiddeldeWOZ),
+    Max_WOZ = max(GemiddeldeWOZ),
+    SD_WOZ = sd(GemiddeldeWOZ),
+    
+    Mean_Income = mean(InkomenWerknemer),
+    Min_Income = min(InkomenWerknemer),
+    Max_Income = max(InkomenWerknemer),
+    SD_Income = sd(InkomenWerknemer),
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = c("Statistic", "Variable"),
+    names_sep = "_",
+    values_to = "Value"
+  ) %>%
+  pivot_wider(
+    names_from = Statistic,
+    values_from = Value
+  ) %>%
+  mutate(
+    Variable = recode(
+      Variable,
+      WOZ = "Average WOZ Value",
+      Income = "Employee Income",
+      Affordability = "WOZ-to-Income Ratio"
+    )
+  ) %>%
+  select(Variable, Mean, Min, Max, SD)
+
+kable(
+  provincie_summary,
+  caption = "Descriptive statistics for home value in provinces in the Netherlands, 2023",
+  digits = 2
+)
 ```
 
-```{r Nieuwe Variable}
+```{r New Variable}
 provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
@@ -245,7 +273,7 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   geom_point(size = 2) +
   labs(
     title = "Development of House Values and Employee Income in the Netherlands",
-    subtitle = "Indexed values, 2011 = 100",
+    subtitle = "Indexed values, 2015 = 100",
     x = "Year",
     y = "Index value",
     color = "Variable"
