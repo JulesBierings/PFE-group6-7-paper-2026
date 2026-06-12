@@ -11,18 +11,13 @@ output:
 
 # Set-up your environment
 
-```{r package_install, include=FALSE}
+```{r Load Packages, message=FALSE, warning=FALSE}
 library(cbsodataR)
 library(dplyr)
-library(lubridate)
+library(tidyr)
 library(sf)
 library(knitr)
-```
-
-```{r packages, include=FALSE}
-require(tidyverse)
-require(rmarkdown)
-require(yaml)
+library(ggplot2)
 ```
 
 # Title Page
@@ -65,20 +60,21 @@ To answer this question, the following sub-questions are examined:
 
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
-```{r Downloading Data}
+```{r Download Data, message=FALSE, warning=FALSE}
 # data_download <- cbs_get_data("70072NED")
 
 # Add region label to the dataset
 # raw_dataset <- data_download %>% cbs_add_label_columns()
-
 # write.csv(raw_dataset, "data/raw_dataset.csv")
+
+# Load saved dataset
 raw_dataset = read.csv("data/raw_dataset.csv")
 ```
 
 
 ## 2.2 Provide a short summary of the dataset(s)
 
-```{r Homevalue Dataset}
+```{r Homevalue Dataset, message=FALSE, warning=FALSE}
 huizenprijzen_provincie = raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -95,7 +91,7 @@ huizenprijzen_provincie = raw_dataset %>%
   )
 write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 
-head(huizenprijzen_provincie)
+kable(huizenprijzen_provincie)
 ```
 
 ```{r Income Dataset}
@@ -115,7 +111,7 @@ inkomen_provincie <- raw_dataset %>%
   )
 write.csv(inkomen_provincie, "data/inkomen_provincie.csv")
 
-head(inkomen_provincie)
+kable(inkomen_provincie)
 ```
 
 ```{r Province Datasets Merge}
@@ -129,8 +125,36 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   )  %>%
   mutate(statcode = RegioS)
-head(provincie_samengevoegd)
+
+kable(provincie_samengevoegd, digits = 2)
 ```
+
+```{r Landelijke Dataset}
+landelijk <- raw_dataset %>%
+  mutate(
+    Year = as.integer(substr(Perioden, 1, 4))
+  ) %>%
+  filter(
+    Year >= 2015,
+    Year <= 2024,
+    startsWith(RegioS, "NL")
+  ) %>%
+  select(
+    Year,
+    RegioS_label,
+    BronInkomenAlsWerknemer_141,
+    GemiddeldeWOZWaardeVanWoningen_98
+  ) %>%
+  rename(
+    GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
+    InkomenWerknemer = BronInkomenAlsWerknemer_141
+  )
+
+write.csv(landelijk, "data/landelijk.csv")
+
+kable(landelijk)
+```
+
 ```{r Summarize Data}
 provincie_summary = provincie_samengevoegd %>%
   summarise(
@@ -170,82 +194,55 @@ kable(
   digits = 2
 )
 ```
+## 2.3 Describe the type of variables included
 
-```{r New Variable}
+Think of things like:
+
+-   Do the variables contain health information or SES information?
+
+-   Have they been measured by interviewing individuals or is the data coming from administrative sources?
+
+## 3.2 Generate necessary variables
+
+
+```{r New Variable 1}
 provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
   )
 provincie_samengevoegd
 
-# 2e Nieuwe variable
-
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 ```
-
-```{r Landelijke Dataset}
-landelijk <- raw_dataset %>%
-  mutate(
-    Year = as.integer(substr(Perioden, 1, 4))
-  ) %>%
-  filter(
-    Year >= 2015,
-    Year <= 2024,
-    startsWith(RegioS, "NL")
-  ) %>%
-  select(
-    Year,
-    RegioS_label,
-    BronInkomenAlsWerknemer_141,
-    GemiddeldeWOZWaardeVanWoningen_98
-  ) %>%
-  rename(
-    GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
-    InkomenWerknemer = BronInkomenAlsWerknemer_141
-  ) %>%
+```{r New Variable 2}
+landelijk_growthgap = landelijk %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
     WOZ_growth_yoy = (GemiddeldeWOZ / lag(GemiddeldeWOZ) - 1) * 100,
     Income_growth_yoy = (InkomenWerknemer / lag(InkomenWerknemer) - 1) * 100,
     GrowthGap_yoy = WOZ_growth_yoy - Income_growth_yoy
   )
-
-write.csv(landelijk, "data/landelijk.csv")
-
-landelijk
+kable(landelijk_growthgap)
 ```
 
-```{r Get Spatial Information}
-provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
+# Part 3 - Quantifying
 
-provincie_samengevoegd <- provincie_samengevoegd %>%
-  mutate(
-    statcode = trimws(RegioS),
-    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
-  )
+## 3.1 Data cleaning
 
-provincie_map <- provincie_map %>%
-  mutate(
-    statcode = trimws(statcode)
-  )
+Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
 
-provincie_map_data <- provincie_map %>%
-  left_join(
-    provincie_samengevoegd,
-    by = "statcode"
-  )
+```{r data_cleaning}
 
-ggplot(provincie_map_data) +
-  geom_sf(aes(fill = AffordabilityRatio), color = "white") +
-  labs(
-    title = "Housing Affordability by Province in 2023",
-    subtitle = "Average WOZ value divided by employee income",
-    fill = "WOZ-to-income ratio"
-  ) +
-  theme_minimal()
 ```
 
-```{r landelijke_plot}
+Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
+
+
+
+
+## 3.3 Visualize temporal variation
+
+```{r Time Plot}
 # Deze plot gemaakt met chat
 
 landelijk_index <- landelijk %>%
@@ -281,7 +278,49 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   theme_minimal()
 ```
 
-```{r affordability_index_plot}
+## 3.2
+
+## 3.4 Visualize spatial variation
+
+Here you provide a description of why the plot above is relevant to your specific social problem.
+
+```{r Spacial Plot, message=FALSE, warning=FALSE}
+provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
+
+provincie_samengevoegd <- provincie_samengevoegd %>%
+  mutate(
+    statcode = trimws(RegioS),
+    AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
+  )
+
+provincie_map <- provincie_map %>%
+  mutate(
+    statcode = trimws(statcode)
+  )
+
+provincie_map_data <- provincie_map %>%
+  left_join(
+    provincie_samengevoegd,
+    by = "statcode"
+  )
+
+ggplot(provincie_map_data) +
+  geom_sf(aes(fill = AffordabilityRatio), color = "white") +
+  labs(
+    title = "Housing Affordability by Province in 2023",
+    subtitle = "Average WOZ value divided by employee income",
+    fill = "WOZ-to-income ratio"
+  ) +
+  theme_minimal()
+```
+
+## 3.6 Event analysis
+
+Analyze the relationship between two variables.
+Here you provide a description of why the plot above is relevant to your specific social problem.
+
+
+```{r Affordability Index Plot}
 landelijk_affordability_index <- landelijk %>%
   arrange(Year) %>%
   mutate(
@@ -301,7 +340,13 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   theme_minimal()
 ```
 
-```{r subpopulation_urbanization_boxplot}
+## 3.5 Visualize sub-population variation
+
+What is the poverty rate by state?
+
+Here you provide a description of why the plot above is relevant to your specific social problem.
+
+```{r Subpopulation Boxplot}
 urban_affordability <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -387,13 +432,6 @@ inline_code = TRUE
 
 These are things that are usually included in the metadata of the dataset. For your project, you need to provide us with the information from your metadata that we need to understand your dataset of choice.
 
-## 2.3 Describe the type of variables included
-
-Think of things like:
-
--   Do the variables contain health information or SES information?
-
--   Have they been measured by interviewing individuals or is the data coming from administrative sources?
 
 *For the sake of this example, I will continue with the assignment...*
 
@@ -404,38 +442,11 @@ Think of things like:
 Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
 
 ```{r data_cleaning}
-#mean(dataset$percollege)
+
 ```
 
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
-## 3.2 Generate necessary variables
-
-Variable 1
-
-```{r gen_var1}
-
-```
-
-Variable 2
-
-```{r gen_var2}
-
-```
-
-## 3.3 Visualize temporal variation
-
-```{r}
-
-```
-
-## 3.4 Visualize spatial variation
-
-```{r visualise_map}
-
-```
-
-Here you provide a description of why the plot above is relevant to your specific social problem.
 
 ## 3.5 Visualize sub-population variation
 
