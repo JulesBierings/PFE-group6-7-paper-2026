@@ -28,6 +28,7 @@ Max Bergsma
 Gijs Stevens
 Hidde Voors
 Imad el Hilali
+Jules Bierings
 
 
 Include the tutorial group number
