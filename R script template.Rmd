@@ -75,6 +75,8 @@ raw_dataset = read.csv("data/raw_dataset.csv")
 
 ## 2.2 Provide a short summary of the dataset(s)
 
+
+
 ```{r Homevalue Dataset, echo=FALSE, message=FALSE, warning=FALSE}
 huizenprijzen_provincie = raw_dataset %>%
   mutate(
@@ -442,5 +444,7 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
 Provide the link to your PUBLIC repository here: ...
 
 ## 5.2 Reference list
+
+
 
 Use APA referencing throughout your document.
