@@ -3,10 +3,10 @@ title: "Template"
 author: "Studentnames and studentnumbers here"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   word_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 # Set-up your environment
@@ -413,13 +413,13 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   geom_hline(yintercept = 100, linetype = "dashed") +
-  geom_vline(xintercept = 2020, linetype = "dashed", color = "red") +
+  geom_vline(xintercept = 2024, linetype = "dashed", color = "red") +
   annotate(
     "text",
-    x = 2020.15,
-    y = max(landelijk_affordability_index$AffordabilityIndex, na.rm = TRUE),
-    label = "COVID-19 (2020)",
-    hjust = 0,
+    x = 2023.85,
+    y = max(landelijk_affordability_index$AffordabilityIndex, na.rm = TRUE)-27,
+    label = "New Rent Act (2024)",
+    hjust = 1,
     color = "red",
     size = 3.5
   ) +
