@@ -11,7 +11,7 @@ output:
 
 # Set-up your environment
 
-```{r Load Packages, message=FALSE, warning=FALSE}
+```{r Load Packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(cbsodataR)
 library(dplyr)
 library(tidyr)
@@ -61,7 +61,7 @@ To answer this question, the following sub-questions are examined:
 
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
-```{r Download Data, message=FALSE, warning=FALSE}
+```{r Download Data, echo=FALSE, message=FALSE, warning=FALSE}
 # data_download <- cbs_get_data("70072NED")
 
 # Add region label to the dataset
@@ -75,7 +75,7 @@ raw_dataset = read.csv("data/raw_dataset.csv")
 
 ## 2.2 Provide a short summary of the dataset(s)
 
-```{r Homevalue Dataset, message=FALSE, warning=FALSE}
+```{r Homevalue Dataset, echo=FALSE, message=FALSE, warning=FALSE}
 huizenprijzen_provincie = raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -95,7 +95,7 @@ write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 kable(huizenprijzen_provincie)
 ```
 
-```{r Income Dataset}
+```{r Income Dataset, echo=FALSE}
 inkomen_provincie <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -115,7 +115,7 @@ write.csv(inkomen_provincie, "data/inkomen_provincie.csv")
 kable(inkomen_provincie)
 ```
 
-```{r Province Datasets Merge}
+```{r Province Datasets Merge, echo=FALSE}
 provincie_samengevoegd = huizenprijzen_provincie %>%
   inner_join(
     inkomen_provincie,
@@ -130,7 +130,7 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
 kable(provincie_samengevoegd, digits = 2)
 ```
 
-```{r Landelijke Dataset}
+```{r Landelijke Dataset, echo=FALSE}
 landelijk <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -156,7 +156,7 @@ write.csv(landelijk, "data/landelijk.csv")
 kable(landelijk)
 ```
 
-```{r Summarize Data}
+```{r Summarize Data, echo=FALSE}
 provincie_summary = provincie_samengevoegd %>%
   summarise(
     Mean_WOZ = mean(GemiddeldeWOZ),
@@ -215,7 +215,7 @@ Please use a separate 'R block' of code for each type of cleaning. So, e.g. one 
 ## 3.2 Generate necessary variables
 
 
-```{r New Variable 1}
+```{r New Variable 1, echo=FALSE}
 provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
@@ -224,7 +224,7 @@ provincie_samengevoegd
 
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 ```
-```{r New Variable 2}
+```{r New Variable 2, echo=FALSE}
 landelijk = landelijk %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
@@ -239,7 +239,7 @@ kable(landelijk)
 
 ## 3.3 Visualize temporal variation
 
-```{r Time Plot}
+```{r Time Plot, echo=FALSE}
 # Deze plot gemaakt met chat
 
 landelijk_index <- landelijk %>%
@@ -282,7 +282,7 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
-```{r Spacial Plot, message=FALSE, warning=FALSE}
+```{r Spacial Plot, echo=FALSE, message=FALSE, warning=FALSE}
 provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
 
 provincie_samengevoegd <- provincie_samengevoegd %>%
@@ -317,7 +317,7 @@ What is the poverty rate by state?
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
-```{r Subpopulation Boxplot, message=FALSE, warning=FALSE}
+```{r Subpopulation Boxplot, echo=FALSE, message=FALSE, warning=FALSE}
 urban_affordability <- raw_dataset %>%
   mutate(
     Year = as.integer(substr(Perioden, 1, 4))
@@ -400,7 +400,7 @@ Analyze the relationship between two variables.
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
 
-```{r Affordability Index Plot}
+```{r Affordability Index Plot, echo=FALSE}
 landelijk_affordability_index <- landelijk %>%
   arrange(Year) %>%
   mutate(
@@ -411,6 +411,16 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   geom_hline(yintercept = 100, linetype = "dashed") +
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "red") +
+  annotate(
+    "text",
+    x = 2020.15,
+    y = max(landelijk_affordability_index$AffordabilityIndex, na.rm = TRUE),
+    label = "COVID-19 (2020)",
+    hjust = 0,
+    color = "red",
+    size = 3.5
+  ) +
   labs(
     title = "Housing Affordability Index in the Netherlands",
     subtitle = "Affordability ratio indexed to 2015 = 100",
