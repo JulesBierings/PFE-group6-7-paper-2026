@@ -41,7 +41,7 @@ Use APA referencing throughout your document. [Here's a link to some explanation
 
 ## 1.1 Describe the Social Problem
 
-Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth may not have kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market. Rising housing costs can contribute to financial stress, wealth inequality, and reduced access to homeownership.
+Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth have not kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market, according to DNB (DNB, 2026). In addition, CBS states that housing costs in the Netherlands are higher than most EU countries (CBS, 2024).
 
 Understanding whether house prices have increased faster than incomes is therefore important for evaluating changes in housing affordability. If housing prices grow more rapidly than household incomes, purchasing a home becomes increasingly difficult for a large share of the population. This may have significant social and economic consequences, including increased inequality between homeowners and non-homeowners.
 
@@ -53,7 +53,7 @@ To answer this question, the following sub-questions are examined:
 1. How have house prices and average incomes developed between 2014 and 2024?
 2. How has housing affordability changed during this period?
 3. Are there significant differences in housing affordability between Dutch provinces?
-4. Did the COVID-19 pandemic influence the relationship between house prices and income?
+4. Has the introduction of the new rent law changed the relationship between housing prices and income?
 
 # Part 2 - Data Sourcing
 
@@ -75,7 +75,9 @@ raw_dataset = read.csv("data/raw_dataset.csv")
 
 ## 2.2 Provide a short summary of the dataset(s)
 
+The primairy data for this study is sourced from Statistics Netherlands (CBS). The original comprehensive dataset consists of 24,335 observations (rows) and 326 variabeles (columns), capturing key socio-economic indicators such as year, regions, disposable income per employee, WOZ property values.
 
+Given the extensive nature of the data, the single source was programmatically divided into two distinct subsets within R to isolate the specific variabeles required for analysis. The first subset captures detailed data on income per region, while the second focuses on regional WOZ values over time. To reconstruct the data for analysis, these two refined datsets were subsequently merged back together using relational filtering. This process ensures data usability while retaining critical demographic data to evaluate differences across various sub-populations and regions.
 
 ```{r Homevalue Dataset, echo=FALSE, message=FALSE, warning=FALSE}
 huizenprijzen_provincie = raw_dataset %>%
@@ -199,20 +201,20 @@ kable(
 ```
 ## 2.3 Describe the type of variables included
 
-Think of things like:
+The variabeles included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
+1. SES metrics: Disposable income per employee serves as our primary continuous of household financial capacity.
+2. Market metrics: The WOZ property value represents the offical appraised market valuation of residental real estate over time.
+3. Demographic metrics: The use of regions and urbanization levels allow for granular sub-group analysis.
 
--   Do the variables contain health information or SES information?
-
--   Have they been measured by interviewing individuals or is the data coming from administrative sources?
+Rather than being collected through self-supported individual interviews or surveys, this dataset consist entirely of administrative data collected by Statistics Netherland (CBS). The income and demographic data originate directly from national municipal registries (BRP) and tax authority records, while the housing data is compiled from the national valuation registry (Landelijke Voorziening WOZ).Because this data relies on offical administrative registration rather than sample surveys, it minimizes self-reporting bias and provides comprehensive coverage of the target populations. 
 
 
 # Part 3 - Quantifying
 
 ## 3.1 Data cleaning
 
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
+To prepare our data for quantitative analysis, we executed several structured cleaning steps. First, provincial location data was originally recorded in numerical codes. We mapped and translated these administrative codes into their respective official Dutch province names. Second, we systematically handled missing values ($NAs$). To safeguard the statistical integrity of our analysis, we selected a time period that is relevant and without any missing values ($NAs$) at other variables.
 
-Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
 
 ## 3.2 Generate necessary variables
 
@@ -437,6 +439,16 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
 
 ## 4.1 Discuss your findings
 
+# Affordability ratio
+# Growth gap
+
+# Temporal variation
+If we look at the temporal variation, which is constructed by indexing the average WOZ value and disposable income per employee using 2015 as a starting point, we see an alignment initially. However, after 2017 there starts to emerge a growth divergence, which spikes until 2023. Although a period of consolidation will follow, the growth gap is unlikely to close.
+
+# Spatial variation
+# Sub-population variation
+# Event
+
 # Part 5 - Reproducibility
 
 ## 5.1 Github repository link
@@ -445,6 +457,9 @@ Provide the link to your PUBLIC repository here: ...
 
 ## 5.2 Reference list
 
+1. De Nederlandsche Bank. (2026). Woningmarkt. https://www.dnb.nl/actuele-economische-vraagstukken/woningmarkt/
+
+2. Centraal Bureau voor de Statistiek. (2024, 14 mei). Housing costs in the Netherlands higher than in most EU countries. https://www.cbs.nl/en-gb/news/2024/20/housing-costs-in-the-netherlands-higher-than-in-most-eu-countries
 
 
 Use APA referencing throughout your document.
