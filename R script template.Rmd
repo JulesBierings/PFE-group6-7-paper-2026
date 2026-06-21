@@ -1,17 +1,49 @@
 ---
-title: "Template"
-author: "Studentnames and studentnumbers here"
 date: "`r Sys.Date()`"
 output:
-  word_document: default
+  pdf_document:
+    number_sections: true
   html_document:
     df_print: paged
-  pdf_document: default
+  word_document: default
 ---
+\begin{titlepage}
+\centering
+\vspace*{2.5cm}
 
-# Set-up your environment
+{\Huge \textbf{Affordability of Houses in the Netherlands}\par}
+\vspace{0.5cm}
+\vspace{2cm}
 
-```{r Load Packages, echo=FALSE, message=FALSE, warning=FALSE}
+{\large \textbf{Authors}\par}
+\vspace{0.4cm}
+\begin{tabular}{c}
+Melvin Hofman \\
+Max Bergsma \\
+Gijs Stevens \\
+Hidde Voors -- 2729826 \\
+Imad el Hilali \\
+Jules Bierings \\
+\end{tabular}
+\vspace{2cm}
+
+\begin{tabular}{rl}
+\textbf{Tutorial group:} & 6\\
+\textbf{Assignment group:} & 7 \\
+\textbf{Tutorial lecturer:} & C. Schouwenaar \\
+\textbf{Date:} & `r format(Sys.Date(), "%B %d, %Y")` \\
+\end{tabular}
+
+\vfill
+{\large Programming for Economists\par}
+\vspace{1cm}
+\end{titlepage}
+\newpage
+
+\tableofcontents
+\newpage
+
+```{r Environment Setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(cbsodataR)
 library(dplyr)
 library(tidyr)
@@ -20,26 +52,7 @@ library(knitr)
 library(ggplot2)
 ```
 
-# Title Page
-
-Include your names
-Melvin Hofman
-Max Bergsma
-Gijs Stevens
-Hidde Voors
-Imad el Hilali
-Jules Bierings
-
-
-Include the tutorial group number
-
-Include your tutorial lecturer's name
-
-# Part 1 - Identify a Social Problem
-
-Use APA referencing throughout your document. [Here's a link to some explanation.](https://www.mendeley.com/guides/apa-citation-guide/)
-
-## 1.1 Describe the Social Problem
+# 1 Social Problem
 
 Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth have not kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market, according to DNB (DNB, 2026). In addition, CBS states that housing costs in the Netherlands are higher than most EU countries (CBS, 2024).
 
@@ -53,11 +66,11 @@ To answer this question, the following sub-questions are examined:
 1. How have house prices and average incomes developed between 2014 and 2024?
 2. How has housing affordability changed during this period?
 3. Are there significant differences in housing affordability between Dutch provinces?
-4. Has the introduction of the new rent law changed the relationship between housing prices and income?
+4. Is there a visible change in the affordability trend around the introduction of the 2024 rent regulation?
 
 # Part 2 - Data Sourcing
 
-## 2.1 Load in the data
+## 2.1 Data Loading
 
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
@@ -73,11 +86,11 @@ raw_dataset = read.csv("data/raw_dataset.csv")
 ```
 
 
-## 2.2 Provide a short summary of the dataset(s)
+## 2.2 Dataset Summary
 
-The primairy data for this study is sourced from Statistics Netherlands (CBS). The original comprehensive dataset consists of 24,335 observations (rows) and 326 variabeles (columns), capturing key socio-economic indicators such as year, regions, disposable income per employee, WOZ property values.
+The primary data for this study is sourced from Statistics Netherlands (CBS). The original dataset contains 24,335 observations and 326 variables, including socio-economic indicators, average employee income, WOZ property values, regional classifications, and demographic variables.
 
-Given the extensive nature of the data, the single source was programmatically divided into two distinct subsets within R to isolate the specific variabeles required for analysis. The first subset captures detailed data on income per region, while the second focuses on regional WOZ values over time. To reconstruct the data for analysis, these two refined datsets were subsequently merged back together using relational filtering. This process ensures data usability while retaining critical demographic data to evaluate differences across various sub-populations and regions.
+For the analysis, two main subsets are created from the CBS dataset. The first subset contains provincial income data, while the second contains national WOZ values over time. These subsets are cleaned separately and then merged by year and region. This allows the analysis to focus on the relationship between house values and income while retaining the regional structure needed to compare affordability across Dutch provinces and sub-populations.
 
 ```{r Homevalue Dataset, echo=FALSE, message=FALSE, warning=FALSE}
 huizenprijzen_provincie = raw_dataset %>%
@@ -199,7 +212,7 @@ kable(
   digits = 2
 )
 ```
-## 2.3 Describe the type of variables included
+## 2.3 Variables
 
 The variabeles included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
 1. SES metrics: Disposable income per employee serves as our primary continuous of household financial capacity.
@@ -218,17 +231,18 @@ To prepare our data for quantitative analysis, we executed several structured cl
 
 ## 3.2 Generate necessary variables
 
+The affordability ratio divides the average WOZ value of homes by average employee income. Because both variables are measured in thousands of euros, the ratio can be interpreted as how many times the income of a worker corresponds to their house value, on average. A higher ratio indicates lower affordability.
 
-```{r New Variable 1, echo=FALSE}
+```{r New Variable 1: Affordability Ratio, echo=FALSE}
 provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
   )
-provincie_samengevoegd
+kable(provincie_samengevoegd)
 
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
 ```
-```{r New Variable 2, echo=FALSE}
+```{r New Variable 2: Growth Gap, echo=FALSE}
 landelijk = landelijk %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer,
@@ -241,7 +255,7 @@ kable(landelijk)
 
 
 
-## 3.3 Visualize temporal variation
+## 3.3 Temporal Variation
 
 ```{r Time Plot, echo=FALSE}
 # Deze plot gemaakt met chat
@@ -282,9 +296,9 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
 
 ```
 
-## 3.4 Visualize spatial variation
+## 3.4 Spatial Variation
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
+The map visualizes how housing affordability differs across Dutch provinces in 2023. The WOZ-to-income ratio is highest in Noord-Holland and Utrecht, meaning that average house values are high relative to employee income in these provinces. Provinces such as Zeeland, Groningen and Limburg show lower ratios, suggesting relatively better affordability. This spatial pattern is relevant because the housing affordability problem is not evenly distributed across the Netherlands. However, the province-level this map does not show the differences inside provinces which could vary a lot. For example, inside cities the affordability is likely different than outside cities. 
 
 ```{r Spacial Plot, echo=FALSE, message=FALSE, warning=FALSE}
 provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
@@ -315,11 +329,10 @@ ggplot(provincie_map_data) +
   ) +
   theme_minimal()
 ```
-## 3.5 Visualize sub-population variation
 
-What is the poverty rate by state?
+## 3.5 Sub-Population Variation
 
-Here you provide a description of why the plot above is relevant to your specific social problem.
+The boxplot compares housing affordability across municipalities grouped by the level of urbanization. This is relevant because housing pressure is often expected to be stronger in more urbanized areas, where demand for housing is higher and land is more scarce. The plot shows that affordability ratios differ across urbanization groups, but also that there is substantial variation within each group. This suggests that urbanization matters, but it does not fully explain differences in affordability.
 
 ```{r Subpopulation Boxplot, echo=FALSE, message=FALSE, warning=FALSE}
 urban_affordability <- raw_dataset %>%
@@ -398,11 +411,10 @@ ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
   )
 ```
 
-## 3.6 Event analysis
+## 3.6 Event Analysis
 
-Analyze the relationship between two variables.
-Here you provide a description of why the plot above is relevant to your specific social problem.
-
+Interest rates are included as an external event because mortgage financing costs affect housing demand and house prices. Harris (1989) argues that housing prices are influenced by the real cost of mortgage financing, where nominal mortgage rates interact with expectations of future house-price appreciation. This supports using the 2022 increase in mortgage interest rates as a relevant event for analyzing changes in the WOZ-to-income affordability index.
+In this assignment, 2022 is treated as the turning point because mortgage interest rates started increasing after a period of decreasing rates (De Nederlandsche Bank, 2026). If higher interest rates reduce borrowing capacity and cool housing demand, we would expect WOZ growth to slow relative to income growth after this point. This pattern is visible in the affordability index: affordability worsened until 2023, but improved slightly in 2024 as income growth exceeded WOZ growth.
 
 ```{r Affordability Index Plot, echo=FALSE}
 landelijk_affordability_index <- landelijk %>%
@@ -415,12 +427,12 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   geom_hline(yintercept = 100, linetype = "dashed") +
-  geom_vline(xintercept = 2024, linetype = "dashed", color = "red") +
+  geom_vline(xintercept = 2022, linetype = "dashed", color = "red") +
   annotate(
     "text",
-    x = 2023.85,
+    x = 2021.85,
     y = max(landelijk_affordability_index$AffordabilityIndex, na.rm = TRUE)-27,
-    label = "New Rent Act (2024)",
+    label = "Interest Rate Increase",
     hjust = 1,
     color = "red",
     size = 3.5
@@ -434,32 +446,56 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   theme_minimal()+
   scale_x_continuous(breaks = seq(2015, 2024, by =1))
 ```
+The effect of higher interest rates is not expected to appear immediately in the affordability index. Housing markets adjust with a delay because buyers and sellers need time to change their behavior. Therefore, the affordability index can still increase  after the interest-rate turning point in 2022. This helps explain why affordability continues to deteriorate until 2023, before improving slightly in 2024.
+However, this event analysis remains descriptive. Since there is no control group and only a short post-event period, the graph cannot prove that higher interest rates caused the change in affordability. It only shows that the affordability trend changed after the interest-rate environment shifted.
 
 # Part 4 - Discussion
+## 4.1 Findings
 
-## 4.1 Discuss your findings
+### Affordability ratio
 
-# Affordability ratio
-# Growth gap
+The affordability ratio shows that housing affordability worsened between 2015 and 2024. In 2015, the national affordability ratio was approximately 6.80, meaning that the average WOZ value was about 6.8 times average employee income. By 2023, this ratio had increased to approximately 8.80. Although the ratio declined slightly in 2024, it remained clearly above the 2015 level. This suggests that housing values increased faster than employee income over most of the period.
 
-# Temporal variation
-If we look at the temporal variation, which is constructed by indexing the average WOZ value and disposable income per employee using 2015 as a starting point, we see an alignment initially. However, after 2017 there starts to emerge a growth divergence, which spikes until 2023. Although a period of consolidation will follow, the growth gap is unlikely to close.
+### Growth gap
 
-# Spatial variation
-# Sub-population variation
-# Event
+The year-on-year growth gap shows whether WOZ values grew faster than employee income in a given year. Positive values indicate years in which housing became less affordable because house values increased faster than income. The largest positive growth gap occurred in 2023, when WOZ growth exceeded income growth by a large amount. In 2024, the growth gap became negative, meaning that income growth exceeded WOZ growth.
+
+### Temporal variation
+
+The temporal analysis shows that WOZ values and employee income initially moved relatively closely together. After 2017, however, the indexed WOZ value increased much faster than indexed employee income. This divergence reached its highest point in 2023. Although in 2024 the gap seems to decrease, this was not enough to counteract the gaps growth of previous years.
+
+### Spatial variation
+
+The spatial analysis shows that housing affordability differs strongly across Dutch provinces. Noord-Holland and Utrecht have the highest WOZ-to-income ratios, which means that average house values are high relative to employee income in these provinces. Zeeland, Groningen and Limburg show lower ratios, suggesting relatively better affordability. However, province-level averages should be interpreted carefully because they hide variation within provinces, especially between large cities and smaller municipalities.
+
+### Sub-population variation
+
+The urbanization-level analysis shows that affordability differs between types of municipalities. More urbanized areas generally show higher affordability pressure, but there is also substantial variation within each urbanization category. This means that urbanization is relevant, but it does not fully explain housing affordability differences. Other factors may influence the affordability of houses, like for example commuting possibilities that are available in a certain place. 
+
+### Event
+
+The event analysis suggests that the affordability index continued to worsen after interest rates started increasing in 2022, but improved slightly in 2024. This delayed pattern is expected because housing markets do not adjust immediately to interest-rate changes. Buyers and sellers need time to adjust, and WOZ values may change with a lag. The analysis however, should not be seen as causal proof. The report does not include a control group, and other developments may also have influenced the trend.
+
+## Conclusion
+
+Overall, the analysis suggests that Dutch housing affordability became worse between 2015 and 2024. Average WOZ values increased substantially faster than average employee income. The problem is not evenly distributed across the Netherlands: affordability pressure appears strongest in provinces such as Noord-Holland and Utrecht and differs across urbanization levels. The slight improvement in 2024 is important, but it does not undo the broader deterioration observed over the full period.
 
 # Part 5 - Reproducibility
 
 ## 5.1 Github repository link
 
-Provide the link to your PUBLIC repository here: ...
+https://github.com/JulesBierings/PFE-group6-7-paper-2026
 
-## 5.2 Reference list
+\newpage
+# References
 
-1. De Nederlandsche Bank. (2026). Woningmarkt. https://www.dnb.nl/actuele-economische-vraagstukken/woningmarkt/
+De Nederlandsche Bank. (2026). Woningmarkt. https://www.dnb.nl/actuele-economische-vraagstukken/woningmarkt/
 
-2. Centraal Bureau voor de Statistiek. (2024, 14 mei). Housing costs in the Netherlands higher than in most EU countries. https://www.cbs.nl/en-gb/news/2024/20/housing-costs-in-the-netherlands-higher-than-in-most-eu-countries
+De Nederlandsche Bank. (2026). Interest rates | Dashboard. Retrieved June 21, 2026, from https://www.dnb.nl/en/statistics/dashboards/interest-rates/
+
+Harris, J. C. (1989). The effect of real rates of interest on housing prices. Journal of Real Estate Finance and Economics, 2, 47–60.
+
+Centraal Bureau voor de Statistiek. (2024, 14 mei). Housing costs in the Netherlands higher than in most EU countries. https://www.cbs.nl/en-gb/news/2024/20/housing-costs-in-the-netherlands-higher-than-in-most-eu-countries
 
 
 Use APA referencing throughout your document.
