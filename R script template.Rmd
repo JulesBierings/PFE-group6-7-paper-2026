@@ -66,13 +66,12 @@ To answer this question, the following sub-questions are examined:
 1. How have house prices and average incomes developed between 2014 and 2024?
 2. How has housing affordability changed during this period?
 3. Are there significant differences in housing affordability between Dutch provinces?
-4. Is there a visible change in the affordability trend around the introduction of the 2024 rent regulation?
+4. Is there a visible change in the affordability trend after the increase in mortgage interest rates around 2022?
 
 # Part 2 - Data Sourcing
 
 ## 2.1 Data Loading
-
-Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
+The data were collected from Statistics Netherlands (CBS) using the `cbsodataR` package in R. The main dataset used is CBS table 70072NED, which contains regional socio-economic and housing indicators. After downloading the dataset, label columns were added and a local copy was saved to make the analysis reproducible. The spatial data for the province map were loaded using CBS spatial boundary data.
 
 ```{r Download Data, echo=FALSE, message=FALSE, warning=FALSE}
 # data_download <- cbs_get_data("70072NED")
@@ -214,12 +213,12 @@ kable(
 ```
 ## 2.3 Variables
 
-The variabeles included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
+The variables included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
 1. SES metrics: Disposable income per employee serves as our primary continuous of household financial capacity.
-2. Market metrics: The WOZ property value represents the offical appraised market valuation of residental real estate over time.
+2. Market metrics: The WOZ property value represents the official appraised market valuation of resedential real estate over time.
 3. Demographic metrics: The use of regions and urbanization levels allow for granular sub-group analysis.
 
-Rather than being collected through self-supported individual interviews or surveys, this dataset consist entirely of administrative data collected by Statistics Netherland (CBS). The income and demographic data originate directly from national municipal registries (BRP) and tax authority records, while the housing data is compiled from the national valuation registry (Landelijke Voorziening WOZ).Because this data relies on offical administrative registration rather than sample surveys, it minimizes self-reporting bias and provides comprehensive coverage of the target populations. 
+Rather than being collected through self-supported individual interviews or surveys, this dataset consist entirely of administrative data collected by Statistics Netherlands (CBS). The income and demographic data originate directly from national municipal registries (BRP) and tax authority records, while the housing data is compiled from the national valuation registry (Landelijke Voorziening WOZ).Because this data relies on offical administrative registration rather than sample surveys, it minimizes self-reporting bias and provides comprehensive coverage of the target populations. 
 
 
 # Part 3 - Quantifying
@@ -238,9 +237,18 @@ provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
     AffordabilityRatio = GemiddeldeWOZ / InkomenWerknemer
   )
-kable(provincie_samengevoegd)
-
 write.csv(provincie_samengevoegd, "data/provincie_samengevoegd.csv")
+
+provincie_table_df = provincie_samengevoegd %>%
+  select(
+    Province = RegioS_label,
+    WOZ = GemiddeldeWOZ,
+    Income = InkomenWerknemer,
+    Affordability = AffordabilityRatio
+  ) %>%
+  mutate(Affordability = round(Affordability, 2))
+kable(provincie_table_df,
+      caption = "Housing Affordability by Province, 2023")
 ```
 ```{r New Variable 2: Growth Gap, echo=FALSE}
 landelijk = landelijk %>%
@@ -249,8 +257,20 @@ landelijk = landelijk %>%
     WOZ_growth_yoy = (GemiddeldeWOZ / lag(GemiddeldeWOZ) - 1) * 100,
     Income_growth_yoy = (InkomenWerknemer / lag(InkomenWerknemer) - 1) * 100,
     GrowthGap_yoy = WOZ_growth_yoy - Income_growth_yoy
+  ) 
+
+landelijk_for_table = landelijk %>%
+  select(
+    Year,
+    Income = InkomenWerknemer,
+    WOZ = GemiddeldeWOZ,
+    Affordability = AffordabilityRatio,
+    WOZ_growth = WOZ_growth_yoy,
+    Income_growth = Income_growth_yoy,
+    Growth_gap = GrowthGap_yoy
   )
-kable(landelijk)
+kable(landelijk_for_table,
+      caption = "National Affordability, 2015-2024")
 ```
 
 
@@ -258,8 +278,6 @@ kable(landelijk)
 ## 3.3 Temporal Variation
 
 ```{r Time Plot, echo=FALSE}
-# Deze plot gemaakt met chat
-
 landelijk_index <- landelijk %>%
   arrange(Year) %>%
   mutate(
@@ -283,6 +301,12 @@ landelijk_index <- landelijk %>%
 ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
+  scale_color_manual(
+    values = c(
+      "Average WOZ value" = "darkred",
+      "Employee income" = "darkblue"
+    )
+  ) +
   labs(
     title = "Development of House Values and Employee Income in the Netherlands",
     subtitle = "Indexed values, 2015 = 100",
@@ -290,10 +314,8 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
     y = "Index value",
     color = "Variable"
   ) +
-  theme_minimal()+
-  scale_x_continuous(breaks = seq(2015, 2024, by =1))
-
-
+  theme_minimal(base_family = "serif")+
+  scale_x_continuous(breaks = seq(2015, 2024, by =1)) 
 ```
 
 ## 3.4 Spatial Variation
@@ -301,7 +323,7 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
 The map visualizes how housing affordability differs across Dutch provinces in 2023. The WOZ-to-income ratio is highest in Noord-Holland and Utrecht, meaning that average house values are high relative to employee income in these provinces. Provinces such as Zeeland, Groningen and Limburg show lower ratios, suggesting relatively better affordability. This spatial pattern is relevant because the housing affordability problem is not evenly distributed across the Netherlands. However, the province-level this map does not show the differences inside provinces which could vary a lot. For example, inside cities the affordability is likely different than outside cities. 
 
 ```{r Spacial Plot, echo=FALSE, message=FALSE, warning=FALSE}
-provincie_map <- cbs_get_sf("provincie", 2023, verbose = TRUE)
+provincie_map <- cbs_get_sf("provincie", 2023)
 
 provincie_samengevoegd <- provincie_samengevoegd %>%
   mutate(
@@ -327,7 +349,7 @@ ggplot(provincie_map_data) +
     subtitle = "Average WOZ value divided by employee income",
     fill = "WOZ-to-income ratio"
   ) +
-  theme_minimal()
+  theme_minimal(base_family = "serif")
 ```
 
 ## 3.5 Sub-Population Variation
@@ -398,18 +420,18 @@ urban_affordability <- raw_dataset %>%
   )
 
 ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
-  geom_boxplot() +
+  geom_boxplot(width = 0.55, outlier.alpha = 0.5) +
+  coord_flip() +
   labs(
-    title = "Housing Affordability by Urbanization Level",
+    title = "Affordability varies by urbanization level",
     subtitle = "Municipalities grouped by dominant urbanization category, 2024",
-    x = "Urbanization level",
+    x = NULL,
     y = "WOZ-to-income ratio"
   ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 25, hjust = 1)
-  )
+  theme_minimal(base_family = "serif")
 ```
+
+
 
 ## 3.6 Event Analysis
 
@@ -427,14 +449,14 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
   geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   geom_hline(yintercept = 100, linetype = "dashed") +
-  geom_vline(xintercept = 2022, linetype = "dashed", color = "red") +
+  geom_vline(xintercept = 2022, linetype = "dashed", color = "darkred") +
   annotate(
     "text",
     x = 2021.85,
     y = max(landelijk_affordability_index$AffordabilityIndex, na.rm = TRUE)-27,
     label = "Interest Rate Increase",
     hjust = 1,
-    color = "red",
+    color = "darkred",
     size = 3.5
   ) +
   labs(
@@ -443,7 +465,7 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
     x = "Year",
     y = "Affordability index"
   ) +
-  theme_minimal()+
+  theme_minimal(base_family = "serif")+
   scale_x_continuous(breaks = seq(2015, 2024, by =1))
 ```
 The effect of higher interest rates is not expected to appear immediately in the affordability index. Housing markets adjust with a delay because buyers and sellers need time to change their behavior. Therefore, the affordability index can still increase  after the interest-rate turning point in 2022. This helps explain why affordability continues to deteriorate until 2023, before improving slightly in 2024.
@@ -496,6 +518,3 @@ De Nederlandsche Bank. (2026). Interest rates | Dashboard. Retrieved June 21, 20
 Harris, J. C. (1989). The effect of real rates of interest on housing prices. Journal of Real Estate Finance and Economics, 2, 47–60.
 
 Centraal Bureau voor de Statistiek. (2024, 14 mei). Housing costs in the Netherlands higher than in most EU countries. https://www.cbs.nl/en-gb/news/2024/20/housing-costs-in-the-netherlands-higher-than-in-most-eu-countries
-
-
-Use APA referencing throughout your document.
