@@ -18,7 +18,7 @@ output:
 {\large \textbf{Authors}\par}
 \vspace{0.4cm}
 \begin{tabular}{c}
-Melvin Hofman \\
+Melvin Hofman -- 2864899\\
 Max Bergsma -- 2881411 \\
 Gijs Stevens \\
 Hidde Voors -- 2729826 \\
