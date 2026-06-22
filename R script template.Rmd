@@ -23,7 +23,7 @@ Max Bergsma -- 2881411
 Gijs Stevens \\
 Hidde Voors -- 2729826 \\
 Imad el Hilali \\
-Jules Bierings \\
+Jules Bierings -- 2863430 \\
 \end{tabular}
 \vspace{2cm}
 
