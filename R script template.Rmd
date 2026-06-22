@@ -19,7 +19,7 @@ output:
 \vspace{0.4cm}
 \begin{tabular}{c}
 Melvin Hofman \\
-Max Bergsma -- 2881411
+Max Bergsma -- 2881411 \\
 Gijs Stevens \\
 Hidde Voors -- 2729826 \\
 Imad el Hilali \\
@@ -63,9 +63,13 @@ The main research question of this study is:
 Have housing prices in the Netherlands increased faster than incomes over the past ten years?
 
 To answer this question, the following sub-questions are examined:
+
 1. How have house prices and average incomes developed between 2014 and 2024?
+
 2. How has housing affordability changed during this period?
+
 3. Are there significant differences in housing affordability between Dutch provinces?
+
 4. Is there a visible change in the affordability trend after the increase in mortgage interest rates around 2022?
 
 # Part 2 - Data Sourcing
