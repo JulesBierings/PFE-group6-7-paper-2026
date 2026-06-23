@@ -178,7 +178,20 @@ provincie_samengevoegd = huizenprijzen_provincie %>%
   )  %>%
   mutate(statcode = RegioS)
 
-kable(provincie_samengevoegd, digits = 2)
+provincie_samengevoegd_table <- provincie_samengevoegd %>%
+  rename(
+    Province = RegioS_label,
+    WOZ = GemiddeldeWOZ,
+    Income = InkomenWerknemer
+  ) %>%
+  select(
+    Province,
+    Income,
+    WOZ
+  )
+  
+
+kable(provincie_samengevoegd_table, caption = "Home Value (x 1.000) and Income (x 1.000) Per Province, 2023")
 ```
 
 ```{r Landelijke Dataset, echo=FALSE}
@@ -201,10 +214,20 @@ landelijk <- raw_dataset %>%
     GemiddeldeWOZ = GemiddeldeWOZWaardeVanWoningen_98,
     InkomenWerknemer = BronInkomenAlsWerknemer_141
   )
-
 write.csv(landelijk, "data/landelijk.csv")
 
-kable(landelijk)
+landelijk_table <- landelijk %>%
+  rename(
+    WOZ = GemiddeldeWOZ,
+    Income = InkomenWerknemer
+  ) %>%
+  select(
+    Year,
+    WOZ,
+    Income
+  )
+  
+kable(landelijk_table, caption = "Home Value (x 1.000) and Income (x 1.000) of the Netherlands, 2015-2024")
 ```
 
 ```{r Summarize Data, echo=FALSE}
@@ -243,7 +266,7 @@ provincie_summary = provincie_samengevoegd %>%
 kable(
   provincie_summary,
   caption = "Descriptive statistics for home value in provinces in the Netherlands, 2023",
-  digits = 2
+  digits = 1
 )
 ```
 ## Variables
@@ -458,8 +481,7 @@ ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
   geom_boxplot(width = 0.55, outlier.alpha = 0.5) +
   coord_flip() +
   labs(
-    title = "Affordability varies by urbanization level",
-    subtitle = "Municipalities grouped by dominant urbanization category, 2024",
+    title = "Affordability by Urbanization Level, 2024",
     x = NULL,
     y = "WOZ-to-income ratio"
   ) +
