@@ -568,7 +568,6 @@ The event analysis suggests that the affordability index continued to worsen aft
 
 Overall, the analysis suggests that Dutch housing affordability became worse between 2015 and 2024. Average WOZ values increased substantially faster than average employee income. The problem is not evenly distributed across the Netherlands: affordability pressure appears strongest in provinces such as Noord-Holland and Utrecht and differs across urbanization levels. The slight improvement in 2024 is important, but it does not undo the broader deterioration observed over the full period.
 
-\newpage
 # Appendix
 ## GitHub Repository Link
 
