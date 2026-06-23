@@ -32,7 +32,7 @@ Main dataset:
 1. Clone or download this repository.
 2. Open the project in RStudio.
 3. Install the required packages if necessary.
-4. Run `run_all.R` or knit the R Markdown file.
+4. Knit the R Markdown file.
 5. The script downloads/loads the data, cleans the datasets, creates the figures and tables, and generates the final report.
 
 
