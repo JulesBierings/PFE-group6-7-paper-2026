@@ -4,3 +4,11 @@
 .Ruserdata
 .DS_Store
 .Rhistory
+
+data/*
+!data/.gitkeep
+
+*.pdf
+
+renv/library/
+renv/staging/
