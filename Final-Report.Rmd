@@ -55,7 +55,7 @@ library(stringr)
 
 # Social Problem
 
-Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth have not kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market, according to DNB (DNB, 2026). In addition, CBS states that housing costs in the Netherlands are higher than most EU countries (CBS, 2024).
+Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth has not kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market, according to DNB (DNB, 2026). In addition, CBS states that housing costs in the Netherlands are higher than most EU countries (CBS, 2024).
 
 Understanding whether house prices have increased faster than incomes is therefore important for evaluating changes in housing affordability. If housing prices grow more rapidly than household incomes, purchasing a home becomes increasingly difficult for a large share of the population. This may have significant social and economic consequences, including increased inequality between homeowners and non-homeowners.
 
@@ -133,7 +133,7 @@ huizenprijzen_provincie_table = huizenprijzen_provincie %>%
     WOZ
   )
 
-kable(huizenprijzen_provincie_table, caption="Average House Value (x 1.000) per Province, 2023")
+# kable(huizenprijzen_provincie_table, caption="Average House Value (x 1.000) per Province, 2023")
 ```
 
 ```{r Income Dataset, echo=FALSE}
@@ -163,7 +163,7 @@ inkomen_provincie_table = inkomen_provincie %>%
     Income
   )
 
-kable(inkomen_provincie_table, caption = "Average Income per Province (x 1.000), 2023")
+# kable(inkomen_provincie_table, caption = "Average Income per Province (x 1.000), 2023")
 ```
 
 ```{r Province Datasets Merge, echo=FALSE}
@@ -190,8 +190,7 @@ provincie_samengevoegd_table <- provincie_samengevoegd %>%
     WOZ
   )
   
-
-kable(provincie_samengevoegd_table, caption = "Home Value (x 1.000) and Income (x 1.000) Per Province, 2023")
+# kable(provincie_samengevoegd_table, caption = "Home Value (x 1.000) and Income (x 1.000) Per Province, 2023")
 ```
 
 ```{r Landelijke Dataset, echo=FALSE}
@@ -200,7 +199,7 @@ landelijk <- raw_dataset %>%
     Year = as.integer(substr(Perioden, 1, 4))
   ) %>%
   filter(
-    Year >= 2015,
+    Year >= 2014,
     Year <= 2024,
     startsWith(RegioS, "NL")
   ) %>%
@@ -227,7 +226,7 @@ landelijk_table <- landelijk %>%
     Income
   )
   
-kable(landelijk_table, caption = "Home Value (x 1.000) and Income (x 1.000) of the Netherlands, 2015-2024")
+kable(landelijk_table, caption = "Home Value (x 1.000) and Income (x 1.000) of the Netherlands, 2014-2024")
 ```
 
 ```{r Summarize Data, echo=FALSE}
@@ -273,7 +272,7 @@ kable(
 
 The variables included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
 1. SES metrics: Disposable income per employee serves as our primary continuous of household financial capacity.
-2. Market metrics: The WOZ property value represents the official appraised market valuation of resedential real estate over time.
+2. Market metrics: The WOZ property value represents the official appraised market valuation of residential real estate over time.
 3. Demographic metrics: The use of regions and urbanization levels allow for granular sub-group analysis.
 
 Rather than being collected through self-supported individual interviews or surveys, this dataset consist entirely of administrative data collected by Statistics Netherlands (CBS). The income and demographic data originate directly from national municipal registries (BRP) and tax authority records, while the housing data is compiled from the national valuation registry (Landelijke Voorziening WOZ).Because this data relies on offical administrative registration rather than sample surveys, it minimizes self-reporting bias and provides comprehensive coverage of the target populations. 
@@ -328,7 +327,17 @@ landelijk_for_table = landelijk %>%
     Growth_gap = GrowthGap_yoy
   )
 kable(landelijk_for_table,
-      caption = "National Affordability, 2015-2024")
+      caption = "National Affordability, 2014-2024", 
+      digits = 2,
+      col.names = c(
+        "Year",
+        "Income (x 1.000)",
+        "WOZ (x 1.000)",
+        "Affordability",
+        "WOZ growth (%)",
+        "Income growth (%)",
+        "Growth Gap (%)"
+      ))
 ```
 
 
