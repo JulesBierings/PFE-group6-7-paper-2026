@@ -52,7 +52,7 @@ library(knitr)
 library(ggplot2)
 ```
 
-# 1 Social Problem
+# Social Problem
 
 Housing affordability has become an increasingly important social issue in the Netherlands over the past decade. House prices have risen substantially in many parts of the country, while income growth have not kept pace. As a result, many households, particularly first-time buyers and younger generations, face greater difficulties entering the housing market, according to DNB (DNB, 2026). In addition, CBS states that housing costs in the Netherlands are higher than most EU countries (CBS, 2024).
 
@@ -72,24 +72,24 @@ To answer this question, the following sub-questions are examined:
 
 4. Is there a visible change in the affordability trend after the increase in mortgage interest rates around 2022?
 
-# Part 2 - Data Sourcing
+# Data Sourcing
 
-## 2.1 Data Loading
+## Data Loading
 The data were collected from Statistics Netherlands (CBS) using the `cbsodataR` package in R. The main dataset used is CBS table 70072NED, which contains regional socio-economic and housing indicators. After downloading the dataset, label columns were added and a local copy was saved to make the analysis reproducible. The spatial data for the province map were loaded using CBS spatial boundary data.
 
 ```{r Download Data, echo=FALSE, message=FALSE, warning=FALSE}
-# data_download <- cbs_get_data("70072NED")
+data_download <- cbs_get_data("70072NED")
 
 # Add region label to the dataset
-# raw_dataset <- data_download %>% cbs_add_label_columns()
-# write.csv(raw_dataset, "data/raw_dataset.csv")
+raw_dataset <- data_download %>% cbs_add_label_columns()
+write.csv(raw_dataset, "data/raw_dataset.csv")
 
 # Load saved dataset
 raw_dataset = read.csv("data/raw_dataset.csv")
 ```
 
 
-## 2.2 Dataset Summary
+## Dataset Summary
 
 The primary data for this study is sourced from Statistics Netherlands (CBS). The original dataset contains 24,335 observations and 326 variables, including socio-economic indicators, average employee income, WOZ property values, regional classifications, and demographic variables.
 
@@ -215,7 +215,7 @@ kable(
   digits = 2
 )
 ```
-## 2.3 Variables
+## Variables
 
 The variables included in this study predominantly capture Socio-Economic Status (SES) and housing market characteristics. The key indicators can be broken down into three main categories:
 1. SES metrics: Disposable income per employee serves as our primary continuous of household financial capacity.
@@ -225,14 +225,14 @@ The variables included in this study predominantly capture Socio-Economic Status
 Rather than being collected through self-supported individual interviews or surveys, this dataset consist entirely of administrative data collected by Statistics Netherlands (CBS). The income and demographic data originate directly from national municipal registries (BRP) and tax authority records, while the housing data is compiled from the national valuation registry (Landelijke Voorziening WOZ).Because this data relies on offical administrative registration rather than sample surveys, it minimizes self-reporting bias and provides comprehensive coverage of the target populations. 
 
 
-# Part 3 - Quantifying
+# Quantifying
 
-## 3.1 Data cleaning
+## Data cleaning
 
 To prepare our data for quantitative analysis, we executed several structured cleaning steps. First, provincial location data was originally recorded in numerical codes. We mapped and translated these administrative codes into their respective official Dutch province names. Second, we systematically handled missing values ($NAs$). To safeguard the statistical integrity of our analysis, we selected a time period that is relevant and without any missing values ($NAs$) at other variables.
 
 
-## 3.2 Generate necessary variables
+## Generate necessary variables
 
 The affordability ratio divides the average WOZ value of homes by average employee income. Because both variables are measured in thousands of euros, the ratio can be interpreted as how many times the income of a worker corresponds to their house value, on average. A higher ratio indicates lower affordability.
 
@@ -279,7 +279,7 @@ kable(landelijk_for_table,
 
 
 
-## 3.3 Temporal Variation
+## Temporal Variation
 
 ```{r Time Plot, echo=FALSE}
 landelijk_index <- landelijk %>%
@@ -322,7 +322,7 @@ ggplot(landelijk_index, aes(x = Year, y = Index, color = Variable)) +
   scale_x_continuous(breaks = seq(2015, 2024, by =1)) 
 ```
 
-## 3.4 Spatial Variation
+## Spatial Variation
 
 The map visualizes how housing affordability differs across Dutch provinces in 2023. The WOZ-to-income ratio is highest in Noord-Holland and Utrecht, meaning that average house values are high relative to employee income in these provinces. Provinces such as Zeeland, Groningen and Limburg show lower ratios, suggesting relatively better affordability. This spatial pattern is relevant because the housing affordability problem is not evenly distributed across the Netherlands. However, the province-level this map does not show the differences inside provinces which could vary a lot. For example, inside cities the affordability is likely different than outside cities. 
 
@@ -356,7 +356,7 @@ ggplot(provincie_map_data) +
   theme_minimal(base_family = "serif")
 ```
 
-## 3.5 Sub-Population Variation
+## Sub-Population Variation
 
 The boxplot compares housing affordability across municipalities grouped by the level of urbanization. This is relevant because housing pressure is often expected to be stronger in more urbanized areas, where demand for housing is higher and land is more scarce. The plot shows that affordability ratios differ across urbanization groups, but also that there is substantial variation within each group. This suggests that urbanization matters, but it does not fully explain differences in affordability.
 
@@ -437,7 +437,7 @@ ggplot(urban_affordability, aes(x = UrbanizationType, y = AffordabilityRatio)) +
 
 
 
-## 3.6 Event Analysis
+## Event Analysis
 
 Interest rates are included as an external event because mortgage financing costs affect housing demand and house prices. Harris (1989) argues that housing prices are influenced by the real cost of mortgage financing, where nominal mortgage rates interact with expectations of future house-price appreciation. This supports using the 2022 increase in mortgage interest rates as a relevant event for analyzing changes in the WOZ-to-income affordability index.
 In this assignment, 2022 is treated as the turning point because mortgage interest rates started increasing after a period of decreasing rates (De Nederlandsche Bank, 2026). If higher interest rates reduce borrowing capacity and cool housing demand, we would expect WOZ growth to slow relative to income growth after this point. This pattern is visible in the affordability index: affordability worsened until 2023, but improved slightly in 2024 as income growth exceeded WOZ growth.
@@ -475,8 +475,8 @@ ggplot(landelijk_affordability_index, aes(x = Year, y = AffordabilityIndex)) +
 The effect of higher interest rates is not expected to appear immediately in the affordability index. Housing markets adjust with a delay because buyers and sellers need time to change their behavior. Therefore, the affordability index can still increase  after the interest-rate turning point in 2022. This helps explain why affordability continues to deteriorate until 2023, before improving slightly in 2024.
 However, this event analysis remains descriptive. Since there is no control group and only a short post-event period, the graph cannot prove that higher interest rates caused the change in affordability. It only shows that the affordability trend changed after the interest-rate environment shifted.
 
-# Part 4 - Discussion
-## 4.1 Findings
+# Discussion
+## Findings
 
 ### Affordability ratio
 
