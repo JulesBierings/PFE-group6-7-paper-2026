@@ -20,7 +20,7 @@ output:
 \begin{tabular}{c}
 Melvin Hofman -- 2864899\\
 Max Bergsma -- 2881411 \\
-Gijs Stevens \\
+Gijs Stevens --2811736 \\
 Hidde Voors -- 2729826 \\
 Imad el Hilali \\
 Jules Bierings -- 2863430 \\
