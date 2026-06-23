@@ -50,6 +50,7 @@ library(tidyr)
 library(sf)
 library(knitr)
 library(ggplot2)
+library(stringr)
 ```
 
 # Social Problem
@@ -87,6 +88,10 @@ if (!file.exists("data/raw_dataset.csv")) {
   
   # Add region label to the dataset
   raw_dataset <- data_download %>% cbs_add_label_columns()
+  raw_dataset <- raw_dataset %>%
+    mutate(
+      RegioS_label = str_remove(RegioS_label, " \\(PV\\)")
+    )
   
   write.csv(raw_dataset, "data/raw_dataset.csv")
 }
@@ -118,7 +123,17 @@ huizenprijzen_provincie = raw_dataset %>%
   )
 write.csv(huizenprijzen_provincie, "data/huizenprijzen_provincie.csv")
 
-kable(huizenprijzen_provincie)
+huizenprijzen_provincie_table = huizenprijzen_provincie %>%
+  rename(
+    Province = RegioS_label,
+    WOZ = GemiddeldeWOZWaardeVanWoningen_98
+  ) %>%
+  select(
+    Province,
+    WOZ
+  )
+
+kable(huizenprijzen_provincie_table, caption="Average House Value (x 1.000) per Province, 2023")
 ```
 
 ```{r Income Dataset, echo=FALSE}
@@ -138,7 +153,17 @@ inkomen_provincie <- raw_dataset %>%
   )
 write.csv(inkomen_provincie, "data/inkomen_provincie.csv")
 
-kable(inkomen_provincie)
+inkomen_provincie_table = inkomen_provincie %>%
+  rename(
+    Province = RegioS_label,
+    Income = BronInkomenAlsWerknemer_141
+  ) %>%
+  select(
+    Province,
+    Income
+  )
+
+kable(inkomen_provincie_table, caption = "Average Income per Province (x 1.000), 2023")
 ```
 
 ```{r Province Datasets Merge, echo=FALSE}
