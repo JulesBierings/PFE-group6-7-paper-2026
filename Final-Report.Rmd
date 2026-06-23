@@ -78,12 +78,18 @@ To answer this question, the following sub-questions are examined:
 The data were collected from Statistics Netherlands (CBS) using the `cbsodataR` package in R. The main dataset used is CBS table 70072NED, which contains regional socio-economic and housing indicators. After downloading the dataset, label columns were added and a local copy was saved to make the analysis reproducible. The spatial data for the province map were loaded using CBS spatial boundary data.
 
 ```{r Download Data, echo=FALSE, message=FALSE, warning=FALSE}
-data_download <- cbs_get_data("70072NED")
+if (!dir.exists("data")){
+  dir.create("data")
+}
 
-# Add region label to the dataset
-raw_dataset <- data_download %>% cbs_add_label_columns()
-write.csv(raw_dataset, "data/raw_dataset.csv")
-
+if (!file.exists("data/raw_dataset.csv")) {
+  data_download <- cbs_get_data("70072NED")
+  
+  # Add region label to the dataset
+  raw_dataset <- data_download %>% cbs_add_label_columns()
+  
+  write.csv(raw_dataset, "data/raw_dataset.csv")
+}
 # Load saved dataset
 raw_dataset = read.csv("data/raw_dataset.csv")
 ```
