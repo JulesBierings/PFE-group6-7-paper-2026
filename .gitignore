@@ -9,6 +9,3 @@ data/*
 !data/.gitkeep
 
 *.pdf
-
-renv/library/
-renv/staging/
